@@ -14,6 +14,7 @@ async def create_ticket(ticket: TicketCreate):
     ticket_doc["status"] = "pending"
     result = await tickets_collection.insert_one(ticket_doc)
     ticket_doc["id"] = str(result.inserted_id)
+    del ticket_doc["_id"]
     return ticket_doc
 
 @router.get("/tickets")
