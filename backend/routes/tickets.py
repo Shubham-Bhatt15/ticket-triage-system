@@ -1,9 +1,9 @@
-from fastapi import APIRouter
+from fastapi import APIRouter,HTTPException
 from bson import ObjectId
 from database import tickets_collection
 from models import TicketCreate
 from services.ai_classifier import classify_ticket
-
+from config import TICKET_STATUSES
 router = APIRouter()
 
 @router.post("/tickets")
@@ -26,8 +26,11 @@ async def get_tickets():
         tickets.append(t)
     return tickets
 
+
 @router.patch("/tickets/{ticket_id}")
 async def update_status(ticket_id: str, status: str):
+    if status not in TICKET_STATUSES:
+        raise HTTPException(status_code=400, detail="Invalid status")
     await tickets_collection.update_one(
         {"_id": ObjectId(ticket_id)}, {"$set": {"status": status}}
     )

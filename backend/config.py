@@ -6,3 +6,5 @@ TICKET_CATEGORIES = [
     "Complaint"
 ]
 PRIORITY_LEVELS = ["Low", "Medium", "High"]
+
+TICKET_STATUSES = ["pending", "in_progress", "resolved"]
