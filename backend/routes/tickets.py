@@ -1,14 +1,18 @@
 from fastapi import APIRouter,HTTPException
 from bson import ObjectId
 from database import tickets_collection
-from models import TicketCreate
+from models import TicketCreate,TicketResponse
 from services.ai_classifier import classify_ticket
 from config import TICKET_STATUSES
 router = APIRouter()
 
-@router.post("/tickets")
+@router.post("/tickets",response_model=TicketResponse)
 async def create_ticket(ticket: TicketCreate):
-    ai_result = classify_ticket(ticket.message)
+    try:
+        ai_result = classify_ticket(ticket.message)
+    except Exception as e:
+        ai_result = {"category": "General Inquiry", "priority": "Low"}  # sensible fallback
+        print(f"AI classification failed: {e}")
     ticket_doc = ticket.model_dump()
     ticket_doc.update(ai_result)
     ticket_doc["status"] = "pending"
@@ -17,7 +21,7 @@ async def create_ticket(ticket: TicketCreate):
     del ticket_doc["_id"]
     return ticket_doc
 
-@router.get("/tickets")
+@router.get("/tickets",response_model=list[TicketResponse])
 async def get_tickets():
     tickets = []
     async for t in tickets_collection.find():
@@ -35,3 +39,13 @@ async def update_status(ticket_id: str, status: str):
         {"_id": ObjectId(ticket_id)}, {"$set": {"status": status}}
     )
     return {"message": "updated"}
+
+
+@router.get("/tickets/{ticket_id}",response_model=TicketResponse)
+async def get_ticket_by_id(ticket_id:str):
+    ticket =  await tickets_collection.find_one({"_id":ObjectId(ticket_id)})
+    if not ticket:
+        raise HTTPException(status_code=404, detail="Ticket not found")
+    ticket["id"] = str(ticket["_id"])
+    del ticket["_id"]
+    return ticket
