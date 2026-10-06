@@ -15,7 +15,7 @@ function App() {
         <Route path="new" element={<CreateTicket />} />
         <Route path="admin" element={<TicketList />} />
         <Route path="admin/tickets/:id" element={<TicketDetail />} />
-      </Route>
+      </Route> 
     </Routes>
   </>
  )

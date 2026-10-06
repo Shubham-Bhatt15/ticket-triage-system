@@ -30,7 +30,7 @@ function CreateTicket() {
       })
       if (!res.ok) throw new Error('Failed to create ticket')
       const created = await res.json()
-      navigate(`/tickets/${created.id}`)
+      navigate(`/admin/tickets/${created.id}`)
     } catch (err) {
       setError(err.message)
       setSubmitting(false)

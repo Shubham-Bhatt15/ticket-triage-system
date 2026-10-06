@@ -6,7 +6,7 @@ function Navbar() {
       <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
           <div className="w-6 h-6 bg-gray-900 rounded-md" />
-          <span className="font-semibold text-gray-900 text-sm">TicketDesk</span>
+          <span className="font-semibold text-gray-900 text-sm">Ticket Desk</span>
         </Link>
         <div className="flex items-center gap-6 text-sm text-gray-500">
           <Link to="/new" className="hover:text-gray-900">Submit a ticket</Link>
